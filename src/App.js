@@ -21,6 +21,7 @@ const App = () => { // app component
   const [editItemId, setEditItemId] = useState(null); // tracking which album is being edited
   const [showModal, setShowModal] = useState(false); // whether pop-up form is visible
   const [noResults, setNoResults] = useState(false); // whether no results message shows 
+  const [errorMessage, setErrorMessage] = useState(''); // For other errors generally
   const apiUrl = 'https://project-2-rest-api.vercel.app/api'; // vercel url so can use axios etc
 
   // Get api/getall route - fetches all the items
@@ -63,6 +64,7 @@ const App = () => { // app component
       resetForm(); // clears form
     } catch (error) {
       console.error('Error submitting form:', error); // console error for debugging
+      setErrorMessage('Error submitting form'); // Error for failed adding or updating for user
     }
   };
 
@@ -105,6 +107,7 @@ const App = () => { // app component
       fetchItems(); // refreshes list after item deleted
     } catch (error) {
       console.error('Error deleting item:', error); // console error for debugging
+      setErrorMessage('Error deleting item');; // error for user, deletion didnt work
     }
   };
 
@@ -264,6 +267,11 @@ const App = () => { // app component
 
       {/* Displays albums */}
       <h2 className="my-4">Album List</h2>
+      {errorMessage && (
+        <p className="text-danger mt-3">
+          {errorMessage}
+        </p>
+      )}
       <Table striped bordered hover>
         <thead>
           <tr>
