@@ -1,12 +1,13 @@
+// imports so can use in the program
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios'; 
 import { Container, Row, Col, Table, Button, Form, Modal } from 'react-bootstrap';
-import { MdEdit, MdDelete } from 'react-icons/md'; // Importing Material Design icons
+import { MdEdit, MdDelete } from 'react-icons/md'; 
 import './App.css';
 
-const App = () => {
-  const [items, setItems] = useState([]);
-  const [formData, setFormData] = useState({
+const App = () => { // app component
+  const [items, setItems] = useState([]); // items in empty array, setItems for updating
+  const [formData, setFormData] = useState({ // stores input values from form, setFormData for updating
     title: '',
     artist: '',
     genre: '',
@@ -15,58 +16,57 @@ const App = () => {
     countryOfOrigin: '',
     rating: ''
   });
-  const [searchQuery, setSearchQuery] = useState({});
-  const [searchField, setSearchField] = useState('title'); // To track the selected search field
-  const [editItemId, setEditItemId] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [noResults, setNoResults] = useState(false); // To show "No results" message
-  const apiUrl = 'https://project-2-rest-api.vercel.app/api'; // Replace with your Vercel API URL
+  const [searchQuery, setSearchQuery] = useState({}); // stores searches
+  const [searchField, setSearchField] = useState('title'); // set to title but allows choosing field to search by 
+  const [editItemId, setEditItemId] = useState(null); // tracking which album is being edited
+  const [showModal, setShowModal] = useState(false); // whether pop-up form is visible
+  const [noResults, setNoResults] = useState(false); // whether no results message shows 
+  const apiUrl = 'https://project-2-rest-api.vercel.app/api'; // vercel url so can use axios etc
 
-  // Fetch all items from the API (GET /api/getall)
+  // Get api/getall route - fetches all the items
   const fetchItems = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/getall`);
-      setItems(response.data);
-      setNoResults(false); // Reset noResults flag when fetching all items
+    try { // try catch error block
+      const response = await axios.get(`${apiUrl}/getall`); // waits response, axios.get does HTTP get and then apiURl with getall
+      setItems(response.data); // puts response data json into array
+      setNoResults(false); // ensures no results message does not appear
     } catch (error) {
-      console.error('Error fetching items:', error);
+      console.error('Error fetching items:', error); // console error message for debugging
+      setNoResults(true); // shows no results to user
     }
   };
 
-  // Fetch items based on search query (GET /api/search)
+  // Get items using api/search route
   const searchItems = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/search`, {
-        params: searchQuery,
+    try { // try catch error block
+      const response = await axios.get(`${apiUrl}/search`, { // waits the response, axios.get does the HTTP get, apiUrl is as above and then adds to it search
+        params: searchQuery, // passes the query to the API
       });
-      setItems(response.data);
-      setNoResults(response.data.length === 0); // Show message if no results
+      setItems(response.data); // response.data stored like above, json into array
+      setNoResults(response.data.length === 0); // Show message if no results checks for length in this case
     } catch (error) {
-      console.error('Error searching items:', error);
-      setNoResults(true); // Display error for failed search
+      console.error('Error searching items:', error); // console error message for debugging
+      setNoResults(true); // Error for failed serach
     }
   };
 
-  // Add new item or update existing item (POST /api/add or PUT /api/update/:id)
-  const submitForm = async (e) => {
-    e.preventDefault();
-    try {
-      if (editItemId) {
-        // Update existing item
-        await axios.put(`${apiUrl}/update/${editItemId}`, formData);
-        setEditItemId(null);
+  // Adding or updating routes via API/add, API/update:id
+  const submitForm = async (e) => {  // e passed when form submitted
+    e.preventDefault(); // prevents default form behaviour so it stops the page reloading
+    try { // try error catch
+      if (editItemId) { // checks if editing item
+        await axios.put(`${apiUrl}/update/${editItemId}`, formData); // axios. put so the HTTP put, apiURL is above, updates based on ID, formdata to be submitted
+        setEditItemId(null); // resets the setEditItemId
       } else {
-        // Add new item
-        await axios.post(`${apiUrl}/add`, formData);
+        await axios.post(`${apiUrl}/add`, formData); // if no edititemid, runs this, this posts the formData as new, so HTTP post
       }
-      fetchItems(); // Refresh the item list after adding or updating
-      resetForm();
+      fetchItems(); // Refreshes list after adding or updating
+      resetForm(); // clears form
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Error submitting form:', error); // console error for debugging
     }
   };
 
-  // Reset form and close modal
+  // Resets the form and closes the modal
   const resetForm = () => {
     setFormData({
       title: '',
@@ -80,38 +80,38 @@ const App = () => {
     setShowModal(false);
   };
 
-  // Handle input changes in the form
+  // Handles changes in the form
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
+    const { name, value } = e.target; // sets e.target to "name" and "value" where name would be input field name and value the addition
+    setFormData((prevData) => ({ //updates form
+      ...prevData, // preserves other data by using previous form and copies here
+      [name]: value, // updates the fields accordingly
     }));
   };
 
-  // Handle search query input change
+  // Handles user input in search  
   const handleSearchChange = (e) => {
-    const { name, value } = e.target;
-    setSearchQuery((prevQuery) => ({
-      ...prevQuery,
-      [name]: value,
-    }));
+    const { name, value } = e.target; // sets e.target to name and value, refer to above
+    setSearchQuery((prevQuery) => ({  // updates search query
+      ...prevQuery, // copies existing
+      [name]: value, // updates the field in search based on user input
+    })); 
   };
 
-  // Delete an item (DELETE /api/delete/:id)
+  // Deletes an item via /api/delete/:id route
   const deleteItem = async (id) => {
-    try {
-      await axios.delete(`${apiUrl}/delete/${id}`);
-      fetchItems(); // Refresh the list after deletion
+    try { // try catch error block
+      await axios.delete(`${apiUrl}/delete/${id}`); // axios.delete for HTTP DELETE route using apiURL
+      fetchItems(); // refreshes list after item deleted
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error('Error deleting item:', error); // console error for debugging
     }
   };
 
-  // Populate form with existing item data for editing
-  const editItem = (item) => {
-    setEditItemId(item._id);
-    setFormData({
+  // Gets data from entry ID and populates form ready for editing
+  const editItem = (item) => { // gets item to edit
+    setEditItemId(item._id); // sets id
+    setFormData({ // updating form data
       title: item.title,
       artist: item.artist,
       genre: item.genre,
@@ -120,10 +120,10 @@ const App = () => {
       countryOfOrigin: item.countryOfOrigin,
       rating: item.rating
     });
-    setShowModal(true);
+    setShowModal(true); // shows modal
   };
 
-  // Fetch the items when the component mounts
+  // shows all items so getall when page loaded
   useEffect(() => {
     fetchItems();
   }, []);
@@ -132,12 +132,13 @@ const App = () => {
     <Container>
       <h1 className="my-4">Music Albums</h1>
 
-      {/* Search Section */}
+      {/* Search  */}
       <h2>Search Albums</h2>
       <Form onSubmit={(e) => {
-    e.preventDefault(); // Prevent default form submission
-    searchItems(); // Trigger search when Enter is pressed
+    e.preventDefault(); // prevents default search
+    searchItems(); // searches when enter pressed
   }}>
+  {/* General Display and buttons with onchange and press events to cause the above components to activate  */}
         <Row>
           <Col md={4}>
             <Form.Select
@@ -179,7 +180,7 @@ const App = () => {
         )}
       </Form>
 
-      {/* Add/Edit Item Section */}
+      {/* Add/Edit Albums */}
       <h2 className="my-4">{editItemId ? 'Edit Album' : 'Add New Album'}</h2>
       <Button onClick={() => setShowModal(true)}>Add Album</Button>
       <Modal show={showModal} onHide={resetForm}>
@@ -261,7 +262,7 @@ const App = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Displaying List of Items */}
+      {/* Displays albums */}
       <h2 className="my-4">Album List</h2>
       <Table striped bordered hover>
         <thead>
@@ -291,17 +292,17 @@ const App = () => {
                 variant="primary"
                 onClick={() => editItem(item)}
                 className="me-2"
-                style={{ padding: '10px' }} // Optional: Adjust padding if the icon becomes too big
+                style={{ padding: '10px' }}
               >
-                <MdEdit size={24} />  {/* Increase icon size */}
+                <MdEdit size={24} /> 
               </Button>
 
               <Button
                 variant="danger"
                 onClick={() => deleteItem(item._id)}
-                style={{ padding: '10px' }}  // Optional: Adjust padding here too
+                style={{ padding: '10px' }}  
               >
-              <MdDelete size={24} />  {/* Increase icon size */}
+              <MdDelete size={24} />  
               </Button>
 
               </td>
