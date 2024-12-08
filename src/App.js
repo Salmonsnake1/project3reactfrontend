@@ -146,7 +146,10 @@ const App = () => { // app component
           <Col md={4}>
             <Form.Select
               value={searchField}
-              onChange={(e) => setSearchField(e.target.value)}
+              onChange={(e) => {
+              setSearchField(e.target.value);
+              setSearchQuery({});
+              }}
             >
               <option value="title">Title</option>
               <option value="artist">Artist</option>
