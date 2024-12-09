@@ -1,3 +1,18 @@
-This is a music album database app. This is the part two of the Full Stack Course project, combined with the previous part the back end. This is combined together to form the music album database app.
+##This is my Project 3 React Front End. This connects to the backend of Project 2, so a user can interact with the music album database. 
 
-It is possible on the app to search for albums, edit the albums, add new albums and delete albums. As well as some functionality for helping display the albums. 
+###This project is a music album database, it allows a user to do the following:
+
+*Add a new album to the databsae
+*Edit an existing album and save the changes
+*Delete an existing album
+*See all entries in the database
+
+This has been displayed using React and React Bootstrap. The API calls with axios. 
+
+###Future potential updates:
+
+*Searching by multiple fields at once.
+*Back end check if album entry already exists to prevent duplicates.
+*Album covers
+
+
