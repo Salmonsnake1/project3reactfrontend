@@ -6,6 +6,7 @@
 * Edit an existing album and save the changes
 * Delete an existing album
 * See all entries in the database
+* Hide all entries in the database
 
 This has been displayed using React and React Bootstrap. The API calls with axios.
 
