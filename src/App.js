@@ -135,20 +135,18 @@ const App = () => { // app component
     <Container>
       <h1 className="my-4">Music Albums</h1>
 
-      {/* Search  */}
       <h2>Search Albums</h2>
       <Form onSubmit={(e) => {
     e.preventDefault(); // prevents default search
     searchItems(); // searches when enter pressed
   }}>
-  {/* General Display and buttons with onchange and press events to cause the above components to activate  */}
         <Row>
           <Col md={4}>
             <Form.Select
               value={searchField}
               onChange={(e) => {
               setSearchField(e.target.value);
-              setSearchQuery({});
+              setSearchQuery({}); // resets search query if choosing another field to search by 
               }}
             >
               <option value="title">Title</option>
